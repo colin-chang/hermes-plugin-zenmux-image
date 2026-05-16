@@ -1,0 +1,7 @@
+name: zenmux-image
+version: "1.0.0"
+description: "ZenMux image generation backend — OpenAI gpt-image-2 & Google Gemini via ZenMux API gateway"
+author: Colin Chang
+kind: backend
+requires_env:
+  - ZENMUX_API_KEY
