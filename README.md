@@ -20,13 +20,13 @@ Supports **OpenAI gpt-image-2** and **Google Gemini** image generation models th
 ## Install
 
 ```bash
-hermes plugins install colinchang/hermes-plugin-zenmux-image --enable
+hermes plugins install colin-chang/hermes-plugin-zenmux-image --enable
 ```
 
 Or install without enabling:
 
 ```bash
-hermes plugins install colinchang/hermes-plugin-zenmux-image
+hermes plugins install colin-chang/hermes-plugin-zenmux-image
 hermes plugins enable zenmux-image
 ```
 
