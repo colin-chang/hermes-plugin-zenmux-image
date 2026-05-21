@@ -1,84 +1,90 @@
-# hermes-plugin-zenmux-image
+# Hermes ZenMux Image Generation Plugin
 
-Hermes Agent image generation plugin for the [ZenMux](https://zenmux.ai/invite/1C3QLF) API gateway.
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Hermes](https://img.shields.io/badge/Hermes-≥%200.7.0-blue)](https://github.com/nousresearch/hermes-agent)
 
-Supports **OpenAI gpt-image-2** and **Google Gemini** image generation models through a single ZenMux API key — no separate FAL, OpenAI, or Google Cloud subscriptions required.
+English Version | [中文版本](./README.zh-CN.md)
 
-## Supported Models
+Teach your Hermes AI assistant to draw — one API Key for both OpenAI and Google Gemini image generation models.
 
-| Model ID | Protocol | Speed | Notes |
-|----------|----------|-------|-------|
-| `openai/gpt-image-2` | OpenAI Images API | ~15-40s | Default; high quality, text-in-image |
-| `openai/gpt-image-2-high` | OpenAI Images API | ~40-120s | Highest fidelity |
-| `google/gemini-3.1-flash-image-preview` | Vertex AI | ~10-30s | Fast, Google Gemini image gen |
+---
 
-## Prerequisites
+## 😵‍💫 What Is This?
 
-- [Hermes Agent](https://github.com/NousResearch/hermes-agent) v0.7+
-- A [ZenMux](https://zenmux.ai/invite/1C3QLF) API key
+**In one sentence:** This plugin lets Hermes generate images. You say "draw a cat" and it draws a cat.
 
-## Install
+Hermes itself is a text-only assistant — it can't draw. This plugin connects it to image generation via the [ZenMux](https://zenmux.ai/invite/1C3QLF) API gateway. One ZenMux API Key gives you access to models from both OpenAI and Google — no need to sign up for each separately.
+
+---
+
+## ✨ Supported Models
+
+| Model | Speed | Best For |
+|-------|-------|----------|
+| **GPT Image 2** (OpenAI) | ~15-40s | High quality, text-in-image capability |
+| **GPT Image 2 High** (OpenAI) | ~40-120s | Maximum fidelity — slow but exquisite |
+| **Gemini 3.1 Flash Image** (Google) | ~10-30s | Fast, great for everyday use |
+
+> 📸 `[screenshot]` — Side-by-side comparison of the three models generating the same prompt (e.g., "a calico cat wearing a crown"), so readers can see the style differences at a glance
+
+---
+
+## 🚀 Quick Start (3 Steps)
+
+### Prerequisites
+
+- ✅ Running [Hermes Agent](https://github.com/nousresearch/hermes-agent) (≥ 0.7.0)
+- ✅ A [ZenMux](https://zenmux.ai/invite/1C3QLF) account and API Key
+
+---
+
+### Step 1: Install the Plugin
 
 ```bash
 hermes plugins install colin-chang/hermes-plugin-zenmux-image --enable
 ```
 
-Or install without enabling:
+### Step 2: Configure API Key
+
+Open `~/.hermes/.env` and add:
 
 ```bash
-hermes plugins install colin-chang/hermes-plugin-zenmux-image
-hermes plugins enable zenmux-image
+ZENMUX_API_KEY=your-zenmux-api-key
 ```
 
-## Configure
+### Step 3: Set the Image Generation Backend
 
-### 1. Add your ZenMux API key
-
-Add to `~/.hermes/.env`:
-
-```
-ZENMUX_API_KEY=your_zenmux_api_key_here
-```
-
-### 2. Set the image generation provider
-
-In `~/.hermes/config.yaml`:
+Add to `~/.hermes/config.yaml`:
 
 ```yaml
 image_gen:
   provider: zenmux
   zenmux:
-    model: openai/gpt-image-2   # default model
+    model: openai/gpt-image-2   # default; change to whatever you prefer
 ```
 
-### 3. Enable the plugin
+Restart Hermes to apply. Now try telling Hermes "Draw a cat wearing a crown."
 
-Make sure `plugins.enabled` includes the plugin:
+---
 
-```yaml
-plugins:
-  enabled:
-    - zenmux-image
-```
+## 📖 Usage Guide
 
-### 4. Restart Hermes
+### Basic Usage
 
-Start a new session for changes to take effect.
+Just tell Hermes what you want to draw, the same way you'd chat normally:
 
-## Usage
+> Draw a cyberpunk city night scene, neon lights reflecting in rainwater
 
-Once configured, just ask Hermes to generate an image:
-
-> 画一只戴着皇冠的三花猫
+> Generate a poster: an astronaut cat planting the Chinese flag on the moon, photorealistic style
 
 ### Switching Models
 
-**Via prompt keywords** (no config change needed):
+**Method 1: Mention it in your prompt** (no config change needed)
 
-- Say "用 **Gemini** 画一只猫" → routes to `google/gemini-3.1-flash-image-preview`
-- Say "用 **OpenAI** 画一个城市" → routes to `openai/gpt-image-2`
+- Say "Draw a cat with **Gemini**" → auto-switches to Gemini
+- Say "Draw a city with **OpenAI**" → auto-switches to GPT Image 2
 
-**Via config:**
+**Method 2: Edit the config file**
 
 ```yaml
 image_gen:
@@ -86,29 +92,75 @@ image_gen:
     model: google/gemini-3.1-flash-image-preview
 ```
 
-**Via environment variable:**
+**Method 3: Environment variable**
 
 ```bash
 export ZENMUX_IMAGE_MODEL=google/gemini-3.1-flash-image-preview
 ```
 
-## Model Selection Priority
+### Model Selection Priority
 
-1. Explicit `model` parameter in tool call (if source patch is applied)
-2. Prompt keyword hint (`gemini` / `openai` / `gpt-image`)
-3. `ZENMUX_IMAGE_MODEL` environment variable
-4. `image_gen.zenmux.model` in config.yaml
-5. Default: `openai/gpt-image-2`
+When multiple methods are active simultaneously, priority from highest to lowest:
 
-## Architecture
+1. Prompt keyword (e.g., "use Gemini" → auto-selects Gemini)
+2. `ZENMUX_IMAGE_MODEL` environment variable
+3. `image_gen.zenmux.model` config setting
+4. Default model: `openai/gpt-image-2`
 
-The plugin implements the `ImageGenProvider` ABC from Hermes Agent. Two API protocols are supported:
+---
 
-- **OpenAI Images API** (`POST /v1/images/generations`) — for gpt-image-2 models
-- **Vertex AI generateContent** (`POST /vertex-ai/v1/models/…:generateContent`) — for Gemini models
+## 🧱 How Does It Work?
 
-Both are accessed through the ZenMux API gateway at `https://zenmux.ai/api/`.
+In plain language:
 
-## License
+```
+You say "draw a cat" ──→ Hermes Gateway ──→ This plugin ──→ ZenMux API ──→ OpenAI / Google
+                                                        │
+                                                   ZenMux acts as a "translator":
+                                                   no matter which model is behind it,
+                                                   you use a single API Key for everything
+```
 
-MIT
+Think of ZenMux as a universal remote — one remote that controls both OpenAI and Google TVs. The plugin translates Hermes' image requests into a format ZenMux understands, and ZenMux forwards them to the actual model.
+
+> 💡 Two protocols: OpenAI models use `POST /v1/images/generations`, Google Gemini uses Vertex AI `generateContent`. But **you don't need to care about this** — the plugin handles it automatically.
+
+---
+
+## ❓ FAQ
+
+**Q: Do I need separate OpenAI and Google accounts?**
+
+A: No. One ZenMux account, one API Key, all models included.
+
+**Q: Where are the generated images saved?**
+
+A: Hermes auto-saves them to local cache. You'll see the image directly in chat.
+
+**Q: Why is image generation sometimes slow?**
+
+A: Depends on which model you pick. `gpt-image-2-high` is highest quality but can take up to 2 minutes. For daily use, `gpt-image-2` (15-40s) or `gemini` (10-30s) are recommended.
+
+**Q: Can I use multiple models at the same time?**
+
+A: Yes — different Threads can use different models without interfering. Thread A with GPT Image 2, Thread B with Gemini — just say "use Gemini to draw..." in your prompt.
+
+---
+
+## 📁 Project Structure
+
+```
+zenmux-image/
+├── plugin.yaml              # Plugin metadata
+├── __init__.py              # Plugin entry point (ImageGenProvider implementation)
+├── README.md                # This document
+├── README.zh-CN.md          # Chinese documentation
+├── LICENSE                  # MIT
+└── .gitignore
+```
+
+---
+
+## 📄 License
+
+MIT — see [LICENSE](LICENSE)
