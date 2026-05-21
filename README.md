@@ -1,6 +1,6 @@
 # hermes-plugin-zenmux-image
 
-Hermes Agent image generation plugin for the [ZenMux](https://zenmux.ai) API gateway.
+Hermes Agent image generation plugin for the [ZenMux](https://zenmux.ai/invite/1C3QLF) API gateway.
 
 Supports **OpenAI gpt-image-2** and **Google Gemini** image generation models through a single ZenMux API key — no separate FAL, OpenAI, or Google Cloud subscriptions required.
 
@@ -15,7 +15,7 @@ Supports **OpenAI gpt-image-2** and **Google Gemini** image generation models th
 ## Prerequisites
 
 - [Hermes Agent](https://github.com/NousResearch/hermes-agent) v0.7+
-- A [ZenMux](https://zenmux.ai) API key
+- A [ZenMux](https://zenmux.ai/invite/1C3QLF) API key
 
 ## Install
 
