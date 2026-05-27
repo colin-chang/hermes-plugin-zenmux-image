@@ -25,8 +25,6 @@ Hermes itself is a text-only assistant — it can't draw. This plugin connects i
 | **GPT Image 2 High** (OpenAI) | ~40-120s | Maximum fidelity — slow but exquisite |
 | **Gemini 3.1 Flash Image** (Google) | ~10-30s | Fast, great for everyday use |
 
-> 📸 `[screenshot]` — Side-by-side comparison of the three models generating the same prompt (e.g., "a calico cat wearing a crown"), so readers can see the style differences at a glance
-
 ---
 
 ## 🚀 Quick Start (3 Steps)
